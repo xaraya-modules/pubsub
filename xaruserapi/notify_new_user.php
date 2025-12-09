@@ -33,7 +33,7 @@ function pubsub_userapi_notify_new_user($args)
                   'data'             => $args['mail_data'],
     ];
 
-    $result = xarMod::apiFunc('mailer', 'user', 'send', $mailargs);
+    $result = xarMod::apiFunc('pubsub', 'user', 'sendmail', $mailargs);
 
     // Notify the admin if required
     if (xarModVars::get('pubsub', 'sendnotice_subscription')) {
@@ -57,6 +57,6 @@ function pubsub_userapi_notify_new_user($args)
                   'bccaddresses'     => [],
                   'data'             => $args['mail_data'],
         ];
-        $result = xarMod::apiFunc('mailer', 'user', 'send', $mailargs);
+        $result = xarMod::apiFunc('pubsub', 'user', 'sendmail', $mailargs);
     }
 }

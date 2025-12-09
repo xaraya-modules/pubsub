@@ -62,7 +62,7 @@ function pubsub_admin_view_queue($args)
                       'bccaddresses'     => [],
                       'data'             => $args['mail_data'],
             ];
-            $data['result'] = xarMod::apiFunc('mailer', 'user', 'send', $mailargs);
+            $data['result'] = xarMod::apiFunc('pubsub', 'user', 'sendmail', $mailargs);
         }
 
         xarController::redirect(xarController::URL('pubsub', 'admin', 'view_queue'));

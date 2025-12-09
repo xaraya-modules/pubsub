@@ -63,7 +63,7 @@ function pubsub_admin_modifyconfig()
             switch ($data['tab']) {
                 case 'general':
                 default:
-                    $data['regoptions'] = xarMod::apiFunc('mailer', 'user', 'getall_mails', ['state'=> 3, 'module'=> "pubsub"]);
+                    //$data['regoptions'] = xarMod::apiFunc('mailer', 'user', 'getall_mails', ['state'=> 3, 'module'=> "pubsub"]);
                     // get the list of hooked modules
                     $hookedmodules = xarMod::apiFunc(
                         'modules',

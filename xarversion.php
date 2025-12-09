@@ -5,7 +5,7 @@
  * @package modules
  * @subpackage pubsub module
  * @category Third Party Xaraya Module
- * @version 2.0.0
+ * @version 2.4.1
  * @license GPL {@link http://www.gnu.org/licenses/gpl.html}
  * @link http://xaraya.com/index.php/release/181.html
  * @author Pubsub Module Development Team
@@ -16,7 +16,7 @@
 
 $modversion['name']         = 'Pubsub';
 $modversion['id']           = '181';
-$modversion['version']      = '2.0.0';
+$modversion['version']      = '2.4.1';
 $modversion['displayname']  = xarML('Pubsub');
 $modversion['description']  = 'Allow users to subscribe to updates to events';
 $modversion['official']     = 1;
@@ -29,11 +29,6 @@ $modversion['category']     = 'Global';
 $modversion['dependencyinfo'] = [
                                 0 => [
                                         'name' => 'Xaraya Core',
-                                        'version_ge' => '2.4.0',
-                                     ],
-                                30064 => [
-                                        'name' => 'mailer',
-                                        'displayname' => 'Mailer module',
-                                        'minversion' => '1.0.0',
+                                        'version_ge' => '2.4.1',
                                      ],
                                       ];

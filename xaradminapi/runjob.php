@@ -83,7 +83,7 @@ function pubsub_adminapi_runjob($args)
                       'bccaddresses'     => [],
                       'data'             => $args['mail_data'],
             ];
-            $result['code'] = xarMod::apiFunc('mailer', 'user', 'send', $mailargs);
+            $result['code'] = xarMod::apiFunc('pubsub', 'user', 'sendmail', $mailargs);
         } catch (Exception $e) {
             $result['exception'] = $e->getMessage();
         }

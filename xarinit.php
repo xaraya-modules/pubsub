@@ -141,13 +141,13 @@ function pubsub_init()
     # Default data for other modules
 #
     // Add basic mailer templates
-    if (xarMod::isAvailable('mailer')) {
+    //if (xarMod::isAvailable('mailer')) {
         $dat_file = sys::code() . 'modules/' . $module . '/xardata/'.'mailer_templates-dat.xml';
         if (file_exists($dat_file)) {
             $data['file'] = $dat_file;
             $objectid = xarMod::apiFunc('dynamicdata', 'util', 'import', $data);
         }
-    }
+    //}
 
     /*    $nextId = $dbconn->GenId($pubsubtemplatestable);
         $name = 'default';
@@ -318,7 +318,7 @@ function pubsub_delete()
     $module = 'pubsub';
     // Remove any mailer templates
     sys::import('xaraya.structures.query');
-    xarMod::apiLoad('mailer');
+    //xarMod::apiLoad('mailer');
     $tables =& xarDB::getTables();
     $q = new Query('DELETE', $tables['mailer_mails']);
     $q->eq('module_id', xarMod::getRegid($module));
