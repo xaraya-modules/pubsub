@@ -114,7 +114,7 @@
       <id>220</id>
       <label>Owner</label>
       <type>username</type>
-      <defaultvalue>xarUserGetVar('uname')</defaultvalue>
+      <defaultvalue>xarUser::getVar('uname')</defaultvalue>
       <source>xar_mailer_mails.role_id</source>
       <status>37</status>
       <seq>11</seq>
@@ -154,7 +154,7 @@
       <id>224</id>
       <label>Module</label>
       <type>objectref</type>
-      <defaultvalue>xarMod::getRegId('mailer')</defaultvalue>
+      <defaultvalue>xarMod::getRegId('pubsub')</defaultvalue>
       <source>xar_mailer_mails.module_id</source>
       <status>34</status>
       <seq>15</seq>

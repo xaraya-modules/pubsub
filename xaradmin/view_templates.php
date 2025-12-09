@@ -30,7 +30,7 @@ function pubsub_admin_view_templates()
     }
 
     sys::import('modules.dynamicdata.class.objects.master');
-    $data['object'] = DataObjectMaster::getObjectList(['name' => 'pubsub_templates']);
+    $data['object'] = DataObjectFactory::getObjectList(['name' => 'pubsub_templates']);
 
     $data['templates'] = [];
     // get the list of available templates

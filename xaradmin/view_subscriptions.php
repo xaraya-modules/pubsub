@@ -41,7 +41,7 @@ function pubsub_admin_view_subscriptions()
         }
     */
     sys::import('modules.dynamicdata.class.objects.master');
-    $data['object'] = DataObjectMaster::getObjectList(['name' => 'pubsub_subscriptions']);
+    $data['object'] = DataObjectFactory::getObjectList(['name' => 'pubsub_subscriptions']);
     $q = $data['object']->dataquery;
 
     // Only active domains

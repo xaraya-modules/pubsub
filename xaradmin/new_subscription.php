@@ -32,7 +32,7 @@ function pubsub_admin_new_subscription()
         return;
     }
 
-    $data['object'] = DataObjectMaster::getObject(['name' => $name]);
+    $data['object'] = DataObjectFactory::getObject(['name' => $name]);
     $data['tplmodule'] = 'pubsub';
 
     if ($data['confirm']) {

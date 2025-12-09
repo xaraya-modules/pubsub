@@ -31,7 +31,7 @@ function pubsub_admin_view_queue($args)
     }
 
     sys::import('modules.dynamicdata.class.objects.master');
-    $data['object'] = DataObjectMaster::getObjectList(['name' => 'pubsub_process']);
+    $data['object'] = DataObjectFactory::getObjectList(['name' => 'pubsub_process']);
 
     if (!empty($action) && ($action == 'process')) {
         // Confirm authorisation code

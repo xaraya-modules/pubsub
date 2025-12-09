@@ -32,7 +32,7 @@ function pubsub_admin_modify_template()
     }
 
     sys::import('modules.dynamicdata.class.objects.master');
-    $data['object'] = DataObjectMaster::getObject(['name' => $name]);
+    $data['object'] = DataObjectFactory::getObject(['name' => $name]);
     $data['tplmodule'] = 'pubsub';
 
     if ($data['confirm']) {

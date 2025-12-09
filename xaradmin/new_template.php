@@ -28,7 +28,7 @@ function pubsub_admin_new_template()
     }
 
     sys::import('modules.dynamicdata.class.objects.master');
-    $data['object'] = DataObjectMaster::getObject(['name' => $name]);
+    $data['object'] = DataObjectFactory::getObject(['name' => $name]);
     if (empty($data['object'])) {
         return;
     }

@@ -49,7 +49,7 @@ function pubsub_admin_delete_job()
     /*------------- Ask for Confirmation.  If yes, action ----------------------------*/
 
     sys::import('modules.dynamicdata.class.objects.master');
-    $event = DataObjectMaster::getObject(['name' => 'pubsub_process']);
+    $event = DataObjectFactory::getObject(['name' => 'pubsub_process']);
     if (!$data['confirm']) {
         $data['idlist'] = $idlist;
         if (is_array($ids)) {

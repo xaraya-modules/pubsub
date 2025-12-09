@@ -64,7 +64,7 @@
 
         // Get the recipient's data
         if (isset($args['role_id'])) {
-                $object = DataObjectMaster::getObject(array('name' => xarModItemVars::get('pubsub','defaultuserobject', xarMod::getID($module))));
+                $object = DataObjectFactory::getObject(array('name' => xarModItemVars::get('pubsub','defaultuserobject', xarMod::getID($module))));
                 if (!is_object($object)) return 7;
                 $result = $object->getItem(array('itemid' => $args['role_id']));
                 if (!$result) return 7;
@@ -88,7 +88,7 @@
             } else {
                 if (isset($args['name'])) {
             // Get the list of message aliases (translations of the same message)
-                    $object = DataObjectMaster::getObjectList(array('name' => xarModItemVars::get('pubsub','defaultmailobject', xarMod::getID($module))));
+                    $object = DataObjectFactory::getObjectList(array('name' => xarModItemVars::get('pubsub','defaultmailobject', xarMod::getID($module))));
                     $where = "name = '" . $args['name'] . "'";
                     $mailitems = $object->getItems(array('where' => $where));
                     if (empty($mailitems)) return 2;
@@ -100,7 +100,7 @@
                     if (!isset($args['id'])) return 2;
                 }
                 // FIXME: sholdn't need to instantiate the object again
-                $object = DataObjectMaster::getObjectList(array('name' => xarModItemVars::get('pubsub','defaultmailobject', xarMod::getID($module))));
+                $object = DataObjectFactory::getObjectList(array('name' => xarModItemVars::get('pubsub','defaultmailobject', xarMod::getID($module))));
                 $where = "locale = '" . $recipientlocale . "' AND alias = " . $args['id'];
                 $mailitems = $object->getItems(array('where' => $where));
             }
@@ -132,7 +132,7 @@
         // Get the header if this message has one
             $header = "";
             if (isset($mailitem['header']) && !empty($mailitem['header'])) {
-                $object = DataObjectMaster::getObject(array('name' => 'mailer_headers'));
+                $object = DataObjectFactory::getObject(array('name' => 'mailer_headers'));
                 $headeritemid = $object->getItem(array('itemid' => $mailitem['header']));
                 $header = $object->properties['body']->getValue();
             }
@@ -140,7 +140,7 @@
         // Get the footer if this message has one
             $footer = "";
             if (!empty($mailitem['footer'])) {
-                $object = DataObjectMaster::getObject(array('name' => 'mailer_footers'));
+                $object = DataObjectFactory::getObject(array('name' => 'mailer_footers'));
                 $footeritemid = $object->getItem(array('itemid' => $mailitem['footer']));
                 $footer = $object->properties['body']->getValue();
             }
@@ -259,7 +259,7 @@
         
         // Check we want to save this message and if so do it
             if (xarModItemVars::get('pubsub','savetodb', xarMod::getID($module))) {
-                $object = DataObjectMaster::getObject(array('name' => 'mailer_history'));
+                $object = DataObjectFactory::getObject(array('name' => 'mailer_history'));
                 $args = array(
                             'mail_id' => $mailitem['id'],
                             'module' => $messagemodule,

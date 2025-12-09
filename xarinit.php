@@ -126,11 +126,15 @@ function pubsub_init()
 #
     $module = 'pubsub';
     $objects = [
-                    'pubsub_events',
-                    'pubsub_subscriptions',
-                    'pubsub_templates',
-                    'pubsub_process',
-                     ];
+        'pubsub_events',
+        'pubsub_subscriptions',
+        'pubsub_templates',
+        'pubsub_process',
+        'mailer_mails',
+        'mailer_headers',
+        'mailer_footers',
+        'mailer_history',
+    ];
 
     if (!xarMod::apiFunc('modules', 'admin', 'standardinstall', ['module' => $module, 'objects' => $objects])) {
         return;
@@ -316,6 +320,7 @@ function pubsub_delete()
     }
 */
     $module = 'pubsub';
+    /**
     // Remove any mailer templates
     sys::import('xaraya.structures.query');
     //xarMod::apiLoad('mailer');
@@ -323,6 +328,7 @@ function pubsub_delete()
     $q = new Query('DELETE', $tables['mailer_mails']);
     $q->eq('module_id', xarMod::getRegid($module));
     $q->run();
+     */
 
     return xarMod::apiFunc('modules', 'admin', 'standarddeinstall', ['module' => $module]);
 }

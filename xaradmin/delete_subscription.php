@@ -49,7 +49,7 @@ function pubsub_admin_delete_subscription()
     /*------------- Ask for Confirmation.  If yes, action ----------------------------*/
 
     sys::import('modules.dynamicdata.class.objects.master');
-    $subscription = DataObjectMaster::getObject(['name' => 'pubsub_subscriptions']);
+    $subscription = DataObjectFactory::getObject(['name' => 'pubsub_subscriptions']);
     if (!$data['confirm']) {
         $data['idlist'] = $idlist;
         if (is_array($ids)) {

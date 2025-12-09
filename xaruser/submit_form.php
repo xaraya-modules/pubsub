@@ -39,7 +39,7 @@ function pubsub_user_submit_form($args)
         $result  = $q->output();
 
         if (empty($result)) {
-            $data['object'] = DataObjectMaster::getObject(['name' => $name]);
+            $data['object'] = DataObjectFactory::getObject(['name' => $name]);
             $data['object']->setFieldValues($default_values, 1);
 
             // Good data: create the item

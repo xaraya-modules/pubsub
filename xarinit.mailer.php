@@ -189,7 +189,7 @@
                     
                     $modid = xarMod::getId('mailer');
             
-                    $objectinfo = DataObjectMaster::getObjectInfo(array('moduleid' => $modid, 'name' => 'mailer_mails'));
+                    $objectinfo = DataObjectFactory::getObjectInfo(array('moduleid' => $modid, 'name' => 'mailer_mails'));
                     if (!isset($objectinfo) || empty($objectinfo['objectid'])) return;
             
                     $objectid = $objectinfo['objectid'];
@@ -224,7 +224,7 @@
                     
                     $modid = xarMod::getId('mailer');
             
-                    $objectinfo = DataObjectMaster::getObjectInfo(array('moduleid' => $modid, 'name' => 'mailer_mails'));
+                    $objectinfo = DataObjectFactory::getObjectInfo(array('moduleid' => $modid, 'name' => 'mailer_mails'));
                     if (!isset($objectinfo) || empty($objectinfo['objectid'])) return;
             
                     $objectid = $objectinfo['objectid'];

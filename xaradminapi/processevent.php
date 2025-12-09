@@ -49,7 +49,7 @@ function pubsub_adminapi_processevent($args)
     }
 
     sys::import('modules.dynamicdata.class.properties.master');
-    $queue = DataObjectMaster::getObject(array('name' => 'pubsub_process'));
+    $queue = DataObjectFactory::getObject(array('name' => 'pubsub_process'));
 */
     $tables = xarDB::getTables();
     $q = new Query('SELECT', $tables['pubsub_events']);

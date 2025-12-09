@@ -37,13 +37,13 @@ function pubsub_adminapi_runjob($args)
 
     if (!empty($args['template_id'])) {
         sys::import('modules.dynamicdata.class.properties.master');
-        $template_object = DataObjectMaster::getObject(['name' => 'pubsub_templates']);
+        $template_object = DataObjectFactory::getObject(['name' => 'pubsub_templates']);
         $template_object->getItem(['itemid' => $args['template_id']]);
         $template_name = 'pubsub_' . $template_object->properties['name']->value;
     }
 
     // Get the mailer_mails object and all templares from the pubsub module
-    $mailer_object = DataObjectMaster::getObjectList(['name' => 'mailer_mails']);
+    $mailer_object = DataObjectFactory::getObjectList(['name' => 'mailer_mails']);
 
     // Set the body to active so it will be picked up by the query
     $mailer_object->properties['body']->setDisplayStatus(DataPropertyMaster::DD_DISPLAYSTATE_ACTIVE);

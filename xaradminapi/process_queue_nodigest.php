@@ -67,7 +67,7 @@ function pubsub_adminapi_process_queue_nodigest($args)
         if (!empty($row['groupid'])) {
             $group_id = (int)$row['groupid'];
             sys::import('modules.dynamicdata.class.objects.master');
-            $group = DataObjectMaster::getObject(['name' => 'roles_groups']);
+            $group = DataObjectFactory::getObject(['name' => 'roles_groups']);
             $group->getItem(['itemid' => $group_id]);
             $users = $group->getDescendants(xarRoles::ROLES_STATE_ACTIVE);
             foreach ($users as $user) {
@@ -132,7 +132,7 @@ function pubsub_adminapi_process_queue_nodigest($args)
         }
 
         // Assemble the message
-        $event_object = DataObjectMaster::getObject(['objectid' => (int)$row['object_id']]);
+        $event_object = DataObjectFactory::getObject(['objectid' => (int)$row['object_id']]);
         $mail_data['event_id']    = (int)$row['event_id'];
         $mail_data['object_id']   = (int)$row['object_id'];
         $mail_data['object_name'] = $event_object->name;

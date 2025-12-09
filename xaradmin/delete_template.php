@@ -32,7 +32,7 @@ function pubsub_admin_delete_template()
     }
 
     sys::import('modules.dynamicdata.class.objects.master');
-    $data['object'] = DataObjectMaster::getObject(['name' => $name]);
+    $data['object'] = DataObjectFactory::getObject(['name' => $name]);
     $data['object']->getItem(['itemid' => $data['itemid']]);
 
     $data['tplmodule'] = 'pubsub';
