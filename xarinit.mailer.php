@@ -97,27 +97,27 @@
     #
     # Set up masks
     #
-        xarRegisterMask('ViewMailer','All','mailer','All','All','ACCESS_OVERVIEW');
-        xarRegisterMask('ReadMailer','All','mailer','All','All','ACCESS_READ');
-        xarRegisterMask('CommentMailer','All','mailer','All','All','ACCESS_COMMENT');
-        xarRegisterMask('ModerateMailer','All','mailer','All','All','ACCESS_MODERATE');
-        xarRegisterMask('EditMailer','All','mailer','All','All','ACCESS_EDIT');
-        xarRegisterMask('AddMailer','All','mailer','All','All','ACCESS_ADD');
-        xarRegisterMask('ManageMailer','All','mailer','All','All','ACCESS_DELETE');
-        xarRegisterMask('AdminMailer','All','mailer','All','All','ACCESS_ADMIN');
+        xarMasks::register('ViewMailer','All','mailer','All','All','ACCESS_OVERVIEW');
+        xarMasks::register('ReadMailer','All','mailer','All','All','ACCESS_READ');
+        xarMasks::register('CommentMailer','All','mailer','All','All','ACCESS_COMMENT');
+        xarMasks::register('ModerateMailer','All','mailer','All','All','ACCESS_MODERATE');
+        xarMasks::register('EditMailer','All','mailer','All','All','ACCESS_EDIT');
+        xarMasks::register('AddMailer','All','mailer','All','All','ACCESS_ADD');
+        xarMasks::register('ManageMailer','All','mailer','All','All','ACCESS_DELETE');
+        xarMasks::register('AdminMailer','All','mailer','All','All','ACCESS_ADMIN');
 
     # --------------------------------------------------------
     #
     # Set up privileges
     #
-        xarRegisterPrivilege('ViewMailer','All','mailer','All','All','ACCESS_OVERVIEW');
-        xarRegisterPrivilege('ReadMailer','All','mailer','All','All','ACCESS_READ');
-        xarRegisterPrivilege('CommentMailer','All','mailer','All','All','ACCESS_COMMENT');
-        xarRegisterPrivilege('ModerateMailer','All','mailer','All','All','ACCESS_MODERATE');
-        xarRegisterPrivilege('EditMailer','All','mailer','All','All','ACCESS_EDIT');
-        xarRegisterPrivilege('AddMailer','All','mailer','All','All','ACCESS_ADD');
-        xarRegisterPrivilege('ManageMailer','All','mailer','All','All','ACCESS_DELETE');
-        xarRegisterPrivilege('AdminMailer','All','mailer','All','All','ACCESS_ADMIN');
+        xarPrivileges::register('ViewMailer','All','mailer','All','All','ACCESS_OVERVIEW');
+        xarPrivileges::register('ReadMailer','All','mailer','All','All','ACCESS_READ');
+        xarPrivileges::register('CommentMailer','All','mailer','All','All','ACCESS_COMMENT');
+        xarPrivileges::register('ModerateMailer','All','mailer','All','All','ACCESS_MODERATE');
+        xarPrivileges::register('EditMailer','All','mailer','All','All','ACCESS_EDIT');
+        xarPrivileges::register('AddMailer','All','mailer','All','All','ACCESS_ADD');
+        xarPrivileges::register('ManageMailer','All','mailer','All','All','ACCESS_DELETE');
+        xarPrivileges::register('AdminMailer','All','mailer','All','All','ACCESS_ADMIN');
 
     # --------------------------------------------------------
     #
@@ -149,7 +149,7 @@
                          'mailer_history',
                          );
 
-        if(!xarModAPIFunc('modules','admin','standardinstall',array('module' => $module, 'objects' => $objects))) return;
+        if(!xarMod::apiFunc('modules','admin','standardinstall',array('module' => $module, 'objects' => $objects))) return;
 
     # --------------------------------------------------------
     #
@@ -264,7 +264,7 @@
     function mailer_delete()
     {
         $this_module = 'mailer';
-        return xarModAPIFunc('modules','admin','standarddeinstall',array('module' => $this_module));
+        return xarMod::apiFunc('modules','admin','standarddeinstall',array('module' => $this_module));
     }
 
 ?>

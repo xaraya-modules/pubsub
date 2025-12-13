@@ -79,7 +79,7 @@ function pubsub_admin_delete_event()
         if (!xarSec::confirmAuthKey()) {
             return;
         }
-        $script = implode('_', xarController::$request->getInfo());
+        $script = implode('_', xarController::getRequest()->getInfo());
         foreach ($ids as $id) {
             $itemid = $event->getItem(['itemid' => $id]);
 //        	$itemid = $event->updateItem(array('itemid' => $id, 'state' => 0));

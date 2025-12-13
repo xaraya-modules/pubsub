@@ -29,7 +29,7 @@ function pubsub_userapi_notify_new_user($args)
                   'senderaddress'    => xarModVars::get('pubsub', 'defaultsenderaddress'),
                   'subject'          => xarML('You have subscribed at #(1)', xarModVars::get('themes', 'SiteName')),
                   'recipientname'    => xarModVars::get('themes', 'SiteName'),
-                  'recipientaddress' => $user['email'],
+                  'recipientaddress' => $args['email'],
                   'data'             => $args['mail_data'],
     ];
 

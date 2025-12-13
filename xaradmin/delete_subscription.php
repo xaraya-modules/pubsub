@@ -79,7 +79,7 @@ function pubsub_admin_delete_subscription()
         if (!xarSec::confirmAuthKey()) {
             return;
         }
-        $script = implode('_', xarController::$request->getInfo());
+        $script = implode('_', xarController::getRequest()->getInfo());
         foreach ($ids as $id) {
             $itemid = $subscription->getItem(['itemid' => $id]);
             $itemid = $subscription->updateItem(['itemid' => $id, 'state' => 0]);

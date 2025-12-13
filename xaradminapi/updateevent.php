@@ -36,7 +36,7 @@ function pubsub_adminapi_updateevent($args)
     if (!isset($modid) || !is_numeric($modid)) {
         $invalid[] = 'module';
     }
-    if (!isset($itemtype) || !is_numberic($itemtype)) {
+    if (!isset($itemtype) || !is_numeric($itemtype)) {
         $invalid[] = 'eventtype';
     }
     if (!isset($groupdescr) || !is_string($groupdescr)) {

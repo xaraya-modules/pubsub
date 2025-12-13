@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mailer Module
  *
@@ -34,7 +35,7 @@
  * - its raw content
  * - its name
  * - its ID
- * 
+ *
  * The sequence of overrides is
  *  1. params passed to this function
  *  2. settings specific to the message to be sent
@@ -51,228 +52,269 @@
  *  6 BL compilation failed
  *  7 no correct user object available
  */
-    sys::import('modules.dynamicdata.class.objects.master');
-    
-    function pubsub_userapi_sendmail($args)
-    {
-        // The module(s) where our information iscoming from
-        $module = isset($args['module']) ? $args['module'] : 'pubsub';
-        $messagemodule = isset($args['messagemodule']) ? $args['messagemodule'] : xarMod::getRegID('pubsub');
-        ;
-        if (!isset($args['role_id']) && !isset($args['recipientaddress'])) 
-            throw new Exception(xarML('No recipient user id or email address'));
+sys::import('modules.dynamicdata.class.objects.master');
 
-        // Get the recipient's data
-        if (isset($args['role_id'])) {
-                $object = DataObjectFactory::getObject(array('name' => xarModItemVars::get('pubsub','defaultuserobject', xarMod::getID($module))));
-                if (!is_object($object)) return 7;
-                $result = $object->getItem(array('itemid' => $args['role_id']));
-                if (!$result) return 7;
-                if (!isset($object->properties['name']) ||!isset($object->properties['email'])) return 7;
-                $recipientname = $object->properties['name']->getValue();
-                $recipientaddress = $object->properties['email']->getValue();
-        } else {
-            $recipientname = isset($args['recipientname']) ? $args['recipientname'] : xarModItemVars::get('pubsub','defaultrecipientname', xarMod::getID($module));
-            $recipientaddress = isset($args['recipientaddress']) ? $args['recipientaddress'] : '';
-            if (empty($recipientaddress)) return 1;
+function pubsub_userapi_sendmail($args)
+{
+    // The module(s) where our information iscoming from
+    $module = $args['module'] ?? 'pubsub';
+    $messagemodule = $args['messagemodule'] ?? xarMod::getRegID('pubsub');
+
+    if (!isset($args['role_id']) && !isset($args['recipientaddress'])) {
+        throw new Exception(xarML('No recipient user id or email address'));
+    }
+
+    // Get the recipient's data
+    if (isset($args['role_id'])) {
+        $object = DataObjectFactory::getObject(['name' => xarModItemVars::get('pubsub', 'defaultuserobject', xarMod::getID($module))]);
+        if (!is_object($object)) {
+            return 7;
         }
-        // Get the recipient's locale
-            $recipientlocale = isset($args['locale']) ? $args['locale'] : '';
-            if (empty($recipientlocale) && isset($recipient->properties['locale'])) $recipientlocale = $recipient->properties['locale']->getValue();
-            if (empty($recipientlocale) && isset($object) && ($object->name == 'roles_users')) $recipientlocale = $recipient->properties['locale']->getValue();
-            if (empty($recipientlocale)) $recipientlocale = xarModItemVars::get('pubsub','defaultlocale', xarMod::getID($module));
-            
-            if (isset($args['message'])) {
+        $result = $object->getItem(['itemid' => $args['role_id']]);
+        if (!$result) {
+            return 7;
+        }
+        if (!isset($object->properties['name']) || !isset($object->properties['email'])) {
+            return 7;
+        }
+        $recipientname = $object->properties['name']->getValue();
+        $recipientaddress = $object->properties['email']->getValue();
+    } else {
+        $recipientname = $args['recipientname'] ?? xarModItemVars::get('pubsub', 'defaultrecipientname', xarMod::getID($module));
+        $recipientaddress = $args['recipientaddress'] ?? '';
+        if (empty($recipientaddress)) {
+            return 1;
+        }
+    }
+    // Get the recipient's locale
+    $recipientlocale = $args['locale'] ?? '';
+    if (empty($recipientlocale) && isset($object) && ($object->name == 'roles_users')) {
+        $recipientlocale = $object->properties['locale']->getValue();
+    }
+    if (empty($recipientlocale)) {
+        $recipientlocale = xarModItemVars::get('pubsub', 'defaultlocale', xarMod::getID($module));
+    }
+
+    if (isset($args['message'])) {
         // We'll send the message passed directly
-                $mailitems = array(array('body' => $args['message']));                
-            } else {
-                if (isset($args['name'])) {
+        $mailitems = [['body' => $args['message']]];
+    } else {
+        if (isset($args['name'])) {
             // Get the list of message aliases (translations of the same message)
-                    $object = DataObjectFactory::getObjectList(array('name' => xarModItemVars::get('pubsub','defaultmailobject', xarMod::getID($module))));
-                    $where = "name = '" . $args['name'] . "'";
-                    $mailitems = $object->getItems(array('where' => $where));
-                    if (empty($mailitems)) return 2;
-            // Grab the first one that fits
-                    $mailitem = current($mailitems);
-                    $args['id'] = $mailitem['id'];
-                } else {
-            // If no message or message name available, need an id
-                    if (!isset($args['id'])) return 2;
-                }
-                // FIXME: sholdn't need to instantiate the object again
-                $object = DataObjectFactory::getObjectList(array('name' => xarModItemVars::get('pubsub','defaultmailobject', xarMod::getID($module))));
-                $where = "locale = '" . $recipientlocale . "' AND alias = " . $args['id'];
-                $mailitems = $object->getItems(array('where' => $where));
-            }
-            
-            
+            $object = DataObjectFactory::getObjectList(['name' => xarModItemVars::get('pubsub', 'defaultmailobject', xarMod::getID($module))]);
+            $where = "name = '" . $args['name'] . "'";
+            $mailitems = $object->getItems(['where' => $where]);
             if (empty($mailitems)) {
+                return 2;
+            }
+            // Grab the first one that fits
+            $mailitem = current($mailitems);
+            $args['id'] = $mailitem['id'];
+        } else {
+            // If no message or message name available, need an id
+            if (!isset($args['id'])) {
+                return 2;
+            }
+        }
+        // FIXME: sholdn't need to instantiate the object again
+        $object = DataObjectFactory::getObjectList(['name' => xarModItemVars::get('pubsub', 'defaultmailobject', xarMod::getID($module))]);
+        $where = "locale = '" . $recipientlocale . "' AND alias = " . $args['id'];
+        $mailitems = $object->getItems(['where' => $where]);
+    }
+
+
+    if (empty($mailitems)) {
         // If no message based on the alias use the ID
-                $where = "id = " . $args['id'];
-                $mailitems = $object->getItems(array('where' => $where));
+        $where = "id = " . $args['id'];
+        $mailitems = $object->getItems(['where' => $where]);
 
         // Still no message? Bail
-                if (empty($mailitems)) return 2;
-            }
-
-        // Grab the first one that fits
-            $mailitem = current($mailitems);
-
-        // Adjust the mail id if such a param was passed
-            $mailid = !empty($args['mail_id']) ? $args['mail_id'] : 0;
-            if (!empty($mailid)) $mailitem['id'] = $mailid;
-            if (empty($mailitem['id'])) $mailitem['id'] = 0;            
-            
-        // Adjust the mail type if such a param was passed
-        // Ensure we always have a value for this
-            $mailtype = !empty($args['mail_type']) ? $args['mail_type'] : 0;
-            if (!empty($mailtype)) $mailitem['mail_type'] = $mailtype;
-            if (empty($mailitem['mail_type'])) $mailitem['mail_type'] = 1;            
-            
-        // Get the header if this message has one
-            $header = "";
-            if (isset($mailitem['header']) && !empty($mailitem['header'])) {
-                $object = DataObjectFactory::getObject(array('name' => 'mailer_headers'));
-                $headeritemid = $object->getItem(array('itemid' => $mailitem['header']));
-                $header = $object->properties['body']->getValue();
-            }
-            
-        // Get the footer if this message has one
-            $footer = "";
-            if (!empty($mailitem['footer'])) {
-                $object = DataObjectFactory::getObject(array('name' => 'mailer_footers'));
-                $footeritemid = $object->getItem(array('itemid' => $mailitem['footer']));
-                $footer = $object->properties['body']->getValue();
-            }
-        // Set redirect information. 
-            $redirectsending = xarModItemVars::get('pubsub','defaultredirect', xarMod::getID($module));
-            $redirectaddress = xarModItemVars::get('pubsub','defaultredirectaddress', xarMod::getID($module));
-            
-        // Check if there is a default redirect
-            if ($redirectsending) {
-                if (empty($redirectaddress)) return 3;
-                $recipientaddress = $redirectaddress;
-            }
-
-        // Check if there is a redirect in the message
-            if (!empty($mailitem['redirect'])) {
-                if (empty($mailitem['redirect_address'])) return 4;
-                $recipientaddress = $mailitem['redirect_address'];
-                $redirectsending = $mailitem['redirect'];
-                $redirectaddress = $mailitem['redirect_address'];
-            }
-            
-        // Get the sender's data
-            $sendername = isset($mailitem['sender_name']) ? $mailitem['sender_name'] : '';
-            $sendername = isset($args['sendername']) ? $args['sendername'] : $sendername;
-            if (empty($sendername)) $sendername = xarModItemVars::get('pubsub','defaultsendername', xarMod::getID($module));
-            $senderaddress = isset($mailitem['sender_address']) ? $mailitem['sender_address'] : '';
-            $senderaddress = isset($args['senderaddress']) ? $args['senderaddress'] : $senderaddress;
-            if (empty($senderaddress)) $senderaddress = xarModItemVars::get('pubsub','defaultsenderaddress', xarMod::getID($module));
-        
-            if (($mailitem['mail_type'] == 1) || ($mailitem['mail_type'] == 2)) {
-                
-                $data = isset($args['data']) ? $args['data'] : array();
-
-                foreach ($data as $key => $value) {
-                    $placeholder = '/%%' . $key . '%%/';
-                    $mailitem['body'] = preg_replace($placeholder,
-                                                     $value,
-                                                     $mailitem['body']);
-                }
-            } 
-
-            $subject = !empty($mailitem['subject']) ? $mailitem['subject'] : '';
-            $subject = isset($args['subject']) ? $args['subject'] : $subject;
-            $message = $header . $mailitem['body'] . $footer;
-
-            if (($mailitem['mail_type'] == 3) || ($mailitem['mail_type'] == 4)) {
-                sys::import('xaraya.templating.compiler');
-                $blCompiler = XarayaCompiler::instance();
-                $data = isset($args['data']) ? $args['data'] : array();
-                try {
-                    $tplString  = '<xar:template xmlns:xar="http://xaraya.com/2004/blocklayout">';
-                    $tplString .= $subject;
-                    $tplString .= '</xar:template>';
-
-                    // Make entities BL compatible
-                    $transformarray = xarMod::apiFunc('pubsub','admin','transform_entities');
-                    $tplString  = str_replace(array_keys($transformarray), $transformarray, $tplString);
-                    
-                    $subject = $blCompiler->compilestring($tplString);
-                    $subject = xarTplString($subject,$data);
-
-                    $tplString  = '<xar:template xmlns:xar="http://xaraya.com/2004/blocklayout">';
-                    $tplString .= $message;
-                    $tplString .= '</xar:template>';
-                    
-                    // Make entities BL compatible
-                    $tplString  = str_replace(array_keys($transformarray), $transformarray, $tplString);
-                    
-                    $message = $blCompiler->compilestring($tplString);
-                    $message = xarTplString($message,$data);
-                } catch (Exception $e) {
-                    return 6;
-                }
-            }
-            
-        // Take care of other data passed through directly
-            $ccaddresses = isset($args['ccaddresses']) ? $args['ccaddresses'] : '';
-            $bccaddresses = isset($args['bccaddresses']) ? $args['bccaddresses'] : '';
-            $custom_header = isset($args['custom_header']) ? $args['custom_header'] : array();
-            $message_envelope = isset($args['message_envelope'])? $args['message_envelope'] : "";
-            
-            $header_x_mailer = !empty($mailitem['header_x_mailer']) ? $mailitem['header_x_mailer'] : '';
-            if(isset($args['header_x_mailer']) && !empty($args['header_x_mailer'])) {
-                $header_x_mailer = $args['header_x_mailer'];
-            }
-            if (empty($header_x_mailer)) $header_x_mailer = xarModItemVars::get('pubsub','defaultheader_x_mailer', xarMod::getID($module));
-            
-            if($header_x_mailer){
-                $custom_header[] = "X-Mailer:".$header_x_mailer;
-            }
-        // Bundle the data into a nice array
-            $args = array('info'             => $recipientaddress,
-                          'name'             => $recipientname,
-                          'ccrecipients'     => $ccaddresses,
-                          'bccrecipients'    => $bccaddresses,
-                          'subject'          => $subject,
-                          'message'          => $message,
-                          'htmlmessage'      => $message,
-                          'from'             => $senderaddress,
-                          'fromname'         => $sendername,
-                          'attachName'       => '',
-                          'attachPath'       => '',
-                          'redirectsending'  => $redirectsending,
-                          'redirectaddress'  => $redirectaddress,
-                          'usetemplates'     => false,
-                          'custom_header'    => $custom_header,
-                          'message_envelope' => $message_envelope
-            );
-
-        // Pass it to the mail module for processing
-        if (!empty($mailitem['mail_type']) && (($mailitem['mail_type'] == 2) || ($mailitem['mail_type'] == 4))) {
-            if (!xarModAPIFunc('mail','admin','sendhtmlmail', $args)) return 5;
-        } else {
-            if (!xarModAPIFunc('mail','admin','sendmail', $args)) return 5;
+        if (empty($mailitems)) {
+            return 2;
         }
-        
-        // Check we want to save this message and if so do it
-            if (xarModItemVars::get('pubsub','savetodb', xarMod::getID($module))) {
-                $object = DataObjectFactory::getObject(array('name' => 'mailer_history'));
-                $args = array(
-                            'mail_id' => $mailitem['id'],
-                            'module' => $messagemodule,
-                            'sender_name' => $sendername,
-                            'sender_address' => $senderaddress,
-                            'recipient_name' => $recipientname,
-                            'recipient_address' => $recipientaddress,
-                            'body' => $message,
-                            'subject' => $subject,
-                            );
-                $item = $object->createItem($args);
-            }
-
-        return 0;
     }
-?>
+
+    // Grab the first one that fits
+    $mailitem = current($mailitems);
+
+    // Adjust the mail id if such a param was passed
+    $mailid = !empty($args['mail_id']) ? $args['mail_id'] : 0;
+    if (!empty($mailid)) {
+        $mailitem['id'] = $mailid;
+    }
+    if (empty($mailitem['id'])) {
+        $mailitem['id'] = 0;
+    }
+
+    // Adjust the mail type if such a param was passed
+    // Ensure we always have a value for this
+    $mailtype = !empty($args['mail_type']) ? $args['mail_type'] : 0;
+    if (!empty($mailtype)) {
+        $mailitem['mail_type'] = $mailtype;
+    }
+    if (empty($mailitem['mail_type'])) {
+        $mailitem['mail_type'] = 1;
+    }
+
+    // Get the header if this message has one
+    $header = "";
+    if (isset($mailitem['header']) && !empty($mailitem['header'])) {
+        $object = DataObjectFactory::getObject(['name' => 'mailer_headers']);
+        $headeritemid = $object->getItem(['itemid' => $mailitem['header']]);
+        $header = $object->properties['body']->getValue();
+    }
+
+    // Get the footer if this message has one
+    $footer = "";
+    if (!empty($mailitem['footer'])) {
+        $object = DataObjectFactory::getObject(['name' => 'mailer_footers']);
+        $footeritemid = $object->getItem(['itemid' => $mailitem['footer']]);
+        $footer = $object->properties['body']->getValue();
+    }
+    // Set redirect information.
+    $redirectsending = xarModItemVars::get('pubsub', 'defaultredirect', xarMod::getID($module));
+    $redirectaddress = xarModItemVars::get('pubsub', 'defaultredirectaddress', xarMod::getID($module));
+
+    // Check if there is a default redirect
+    if ($redirectsending) {
+        if (empty($redirectaddress)) {
+            return 3;
+        }
+        $recipientaddress = $redirectaddress;
+    }
+
+    // Check if there is a redirect in the message
+    if (!empty($mailitem['redirect'])) {
+        if (empty($mailitem['redirect_address'])) {
+            return 4;
+        }
+        $recipientaddress = $mailitem['redirect_address'];
+        $redirectsending = $mailitem['redirect'];
+        $redirectaddress = $mailitem['redirect_address'];
+    }
+
+    // Get the sender's data
+    $sendername = $mailitem['sender_name'] ?? '';
+    $sendername = $args['sendername'] ?? $sendername;
+    if (empty($sendername)) {
+        $sendername = xarModItemVars::get('pubsub', 'defaultsendername', xarMod::getID($module));
+    }
+    $senderaddress = $mailitem['sender_address'] ?? '';
+    $senderaddress = $args['senderaddress'] ?? $senderaddress;
+    if (empty($senderaddress)) {
+        $senderaddress = xarModItemVars::get('pubsub', 'defaultsenderaddress', xarMod::getID($module));
+    }
+
+    if (($mailitem['mail_type'] == 1) || ($mailitem['mail_type'] == 2)) {
+
+        $data = $args['data'] ?? [];
+
+        foreach ($data as $key => $value) {
+            $placeholder = '/%%' . $key . '%%/';
+            $mailitem['body'] = preg_replace(
+                $placeholder,
+                $value,
+                $mailitem['body']
+            );
+        }
+    }
+
+    $subject = !empty($mailitem['subject']) ? $mailitem['subject'] : '';
+    $subject = $args['subject'] ?? $subject;
+    $message = $header . $mailitem['body'] . $footer;
+
+    if (($mailitem['mail_type'] == 3) || ($mailitem['mail_type'] == 4)) {
+        sys::import('xaraya.templating.compiler');
+        $blCompiler = XarayaCompiler::instance();
+        $data = $args['data'] ?? [];
+        try {
+            $tplString  = '<xar:template xmlns:xar="http://xaraya.com/2004/blocklayout">';
+            $tplString .= $subject;
+            $tplString .= '</xar:template>';
+
+            // Make entities BL compatible
+            $transformarray = xarMod::apiFunc('pubsub', 'admin', 'transform_entities');
+            $tplString  = str_replace(array_keys($transformarray), $transformarray, $tplString);
+
+            $subject = $blCompiler->compilestring($tplString);
+            $subject = xarTpl::string($subject, $data);
+
+            $tplString  = '<xar:template xmlns:xar="http://xaraya.com/2004/blocklayout">';
+            $tplString .= $message;
+            $tplString .= '</xar:template>';
+
+            // Make entities BL compatible
+            $tplString  = str_replace(array_keys($transformarray), $transformarray, $tplString);
+
+            $message = $blCompiler->compilestring($tplString);
+            $message = xarTpl::string($message, $data);
+        } catch (Exception $e) {
+            return 6;
+        }
+    }
+
+    // Take care of other data passed through directly
+    $ccaddresses = $args['ccaddresses'] ?? '';
+    $bccaddresses = $args['bccaddresses'] ?? '';
+    $custom_header = $args['custom_header'] ?? [];
+    $message_envelope = $args['message_envelope'] ?? "";
+
+    $header_x_mailer = !empty($mailitem['header_x_mailer']) ? $mailitem['header_x_mailer'] : '';
+    if (isset($args['header_x_mailer']) && !empty($args['header_x_mailer'])) {
+        $header_x_mailer = $args['header_x_mailer'];
+    }
+    if (empty($header_x_mailer)) {
+        $header_x_mailer = xarModItemVars::get('pubsub', 'defaultheader_x_mailer', xarMod::getID($module));
+    }
+
+    if ($header_x_mailer) {
+        $custom_header[] = "X-Mailer:" . $header_x_mailer;
+    }
+    // Bundle the data into a nice array
+    $args = ['info'             => $recipientaddress,
+        'name'             => $recipientname,
+        'ccrecipients'     => $ccaddresses,
+        'bccrecipients'    => $bccaddresses,
+        'subject'          => $subject,
+        'message'          => $message,
+        'htmlmessage'      => $message,
+        'from'             => $senderaddress,
+        'fromname'         => $sendername,
+        'attachName'       => '',
+        'attachPath'       => '',
+        'redirectsending'  => $redirectsending,
+        'redirectaddress'  => $redirectaddress,
+        'usetemplates'     => false,
+        'custom_header'    => $custom_header,
+        'message_envelope' => $message_envelope,
+    ];
+
+    // Pass it to the mail module for processing
+    if (!empty($mailitem['mail_type']) && (($mailitem['mail_type'] == 2) || ($mailitem['mail_type'] == 4))) {
+        if (!xarMod::apiFunc('mail', 'admin', 'sendhtmlmail', $args)) {
+            return 5;
+        }
+    } else {
+        if (!xarMod::apiFunc('mail', 'admin', 'sendmail', $args)) {
+            return 5;
+        }
+    }
+
+    // Check we want to save this message and if so do it
+    if (xarModItemVars::get('pubsub', 'savetodb', xarMod::getID($module))) {
+        $object = DataObjectFactory::getObject(['name' => 'mailer_history']);
+        $args = [
+            'mail_id' => $mailitem['id'],
+            'module' => $messagemodule,
+            'sender_name' => $sendername,
+            'sender_address' => $senderaddress,
+            'recipient_name' => $recipientname,
+            'recipient_address' => $recipientaddress,
+            'body' => $message,
+            'subject' => $subject,
+        ];
+        $item = $object->createItem($args);
+    }
+
+    return 0;
+}

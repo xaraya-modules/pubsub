@@ -54,6 +54,7 @@ function pubsub_user_modifysubscription()
         xarController::redirect($returnurl);
         return;
     }
+    $userid = xarUser::getVar('id');
 
     switch ($subaction) {
         case 0:

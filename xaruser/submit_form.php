@@ -49,7 +49,7 @@ function pubsub_user_submit_form($args)
             xarMod::apiFunc('pubsub', 'user', 'notify_new_user', $default_values['email']);
 
             // If this is an AJAX call, end here
-            xarController::$request->exitAjax();
+            xarController::getRequest()->exitAjax();
 
             // Jump to the next page
             xarController::redirect(xarServer::getCurrentURL());
